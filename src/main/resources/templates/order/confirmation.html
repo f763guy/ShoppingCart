@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>確認訂單</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/font-awesome-4.5.0/css/font-awesome.css}">
+    <link rel='stylesheet' th:href="@{/css/bootstrap.css}">
+    <link rel="stylesheet" th:href="@{/css/ShoppingCart.css}">
+</head>
+<body>
+
+<table class="wwFormTable" style="width: 60%">
+    <tr>
+        <td>
+            <h3>確認訂單</h3>
+            <h4>登入者: [[${session.memName}]] 在線上</h4>
+            <a th:href="@{/product/shop}"><img th:src="@{/images/back3.png}">返回商店</a>
+        </td>
+    </tr>
+</table><br>
+
+
+<div class="container">
+    <h2><i class="fa fa-cog fa-spin"></i>訂單確認:</h2>
+    <br>
+    <table class="table table-hover">
+        <tr style="background-color: #5cb85c;">
+            <th>訂單日期</th>
+            <th>訂單編號</th>
+            <th>會員姓名</th>
+            <th>訂單狀態</th>
+            <th>收件人姓名</th>
+            <th>收件人電話</th>
+            <th>郵遞區號</th>
+            <th>收件地址</th>
+        </tr>
+
+        <tr>
+            <td th:text="${order.ordDate}"></td>
+            <td th:text="${order.ordNo}"></td>
+            <td th:text="${session.memName}"></td>
+            <td th:text="${order.ordStatus==1?'未出貨':'已出貨'}"></td>
+            <td th:text="${order.receiver}"></td>
+            <td th:text="${order.recPhone}"></td>
+            <td th:text="${order.recZip}"></td>
+            <td th:text="${order.recAddress}"></td>
+        </tr>
+
+        <tr>
+            <td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+            <td><div align="right"><font color="red"><b>總金額：$ [[${order.ordTotal}]]</b></font></div></td>
+        </tr>
+
+    </table>
+    <hr style="border: 1px solid" size="1" width="100%">
+</div>
+
+<div class="container">
+    <h2><i class="fa fa-cog fa-spin"></i>訂單明細:</h2>
+    <br>
+    <table class="table table-hover">
+        <tr style="background-color: #fcd3a5;" height="40px" >
+            <th width="20%">商品圖片</th>
+            <th>訂單編號</th>
+            <th>商品編號</th>
+            <th>商品名稱</th>
+            <th>數量</th>
+            <th>單價</th>
+            <th>金額</th>
+        </tr>
+        <th:block th:each="detail : ${details}">
+            <tr>
+                <td style="vertical-align:middle;" width="20%"><img th:src="@{${detail.prodPic}}" class="img-thumbnail"></td>
+                <td style="vertical-align:middle;" th:text="${detail.ordNo}"></td>
+                <td style="vertical-align:middle;" th:text="${detail.productNo}"></td>
+                <td style="vertical-align:middle;" th:text="${detail.prodName}"></td>
+                <td style="vertical-align:middle;" th:text="${detail.quantity}"></td>
+                <td style="vertical-align:middle;" th:text="${detail.prodPrice}"></td>
+                <td style="vertical-align:middle;" th:text="${detail.prodPrice*detail.quantity}">$ </td>
+            </tr>
+        </th:block>
+    </table>
+    <hr style="border: 1px solid" size="1" width="100%">
+</div>
+
+<div class="container">
+    <h2><i class="fa fa-search-plus"></i><a th:href="@{/order/getMemberOrders}">查詢我ˇ的歷史訂單:</a></h2>
+</div>
+
+
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>(本)會員所有訂單</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/font-awesome-4.5.0/css/font-awesome.css}">
+    <link rel='stylesheet' th:href="@{/css/bootstrap.css}">
+    <link rel='stylesheet' th:href="@{/css/listOrders.css}">
+</head>
+<body>
+
+<table style="width:65%; text-align:center;">
+    <tr><td><h3>(本)會員所有訂單<i class="fa fa-cog fa-spin fa-2x"></i></h3>
+        <h4>登入者: [[${session.memName}]] 在線上</h4>
+        <a th:href="@{/product/shop}">
+            <img th:src="@{/images/back3.png}">返回商店</a>
+    </td></tr>
+</table>
+
+<table class="order_Table">
+    <tr>
+        <th>訂單編號</th>
+        <th>會員姓名</th>
+        <th>訂單狀態</th>
+        <th>收件人姓名</th>
+        <th>收件人電話</th>
+        <th>郵遞區號</th>
+        <th>收件地址</th>
+        <th>總金額</th>
+        <th>下單日期</th>
+        <th>
+            <a class="btn btn-default btn-sm" href="#">
+                <i class="fa fa-cog fa-spin fa-2x"></i> <b>檢視明細</b></a>
+        </th>
+    </tr>
+    <th:block th:each="order : ${orders}">
+        <tr>
+            <td th:text="${order.ordNo}"></td>
+            <td th:text="${session.memName}"></td>
+            <td th:text="${order.ordStatus==1?'未出貨':'已出貨'}"></td>
+            <td th:text="${order.receiver}"></td>
+            <td th:text="${order.recPhone}"></td>
+            <td th:text="${order.recZip}"></td>
+            <td width="100" th:text="${order.recAddress}"></td>
+
+            <td>[[${order.ordTotal}]]</td>
+            <td th:text="${order.ordDate}"></td>
+            <td>
+                <FORM method="post" th:action="@{/order/getMemberOrders}"  id="myForm" name="myForm">
+                    <button class="btn btn-success"><i class="fa fa-search-plus lg"></i> 訂單明細</button>
+                    <input type="hidden" name="ordNo" th:value="${order.ordNo}">
+                </FORM>
+            </td>
+        </tr>
+    </th:block>
+</table>
+
+<th:block th:unless="${#lists.isEmpty(details)}">
+<HR style="color: #5cb85c; background-color: #5cb85c; height: 1px;">
+
+    <table style="width:65%; text-align:left;">
+        <tr><td><img th:src="@{/images/ToolsIconCart.png}"><h3><i class="fa fa-cog fa-spin fa-2x"></i>訂單明細</h3></td></tr>
+    </table>
+
+    <table class="orderDetail_Table">
+        <tr height="35px">
+            <th>商品圖片</th>
+            <th>訂單編號</th>
+            <th>商品編號</th>
+            <th>商品名稱</th>
+            <th>數量</th>
+            <th>單價</th>
+            <th>金額</th>
+        </tr>
+        <th:block th:each="detail : ${details}">
+            <tr align='center' valign='middle'>
+                <td><img th:src="@{${detail.prodPic}}" class="img-thumbnail"></td>
+                <td th:text="${detail.ordNo}">${ord_detailsVO.ord_no}</td>
+                <td th:text="${detail.productNo}">${ord_detailsVO.product_no}</td>
+                <td th:text="${detail.prodName}">${productSvc.getOnePro(ord_detailsVO.product_no).prod_name}</td>
+                <td th:text="${detail.quantity}">${ord_detailsVO.quantity}</td>
+                <td th:text="${detail.prodPrice}">${ord_detailsVO.prod_price}</td>
+                <td th:text="${detail.prodPrice*detail.quantity}">${ord_detailsVO.prod_price*ord_detailsVO.quantity}</td>
+            </tr>
+        </th:block>
+    </table>
+
+</th:block>
+
+</body>
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en"  xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1">
+    <title>線上購物商城 - 購物車</title>
+    <link rel='stylesheet' th:href="@{/css/bootstrap.css}">
+    <link rel="stylesheet" th:href="@{/css/ShoppingCart.css}">
+    <script th:src="@{/js/sweetalert.min.js}"></script>
+    <script th:src="@{/js/jquery.min.js}"></script>
+</head>
+<body>
+
+<div class="container" style="width: 75%">
+
+    <table class="wwFormTable">
+        <tr>
+            <td>
+                <h3>線上購物商城 - 購物車</h3>
+                <h4>登入者: [[${session.memName}]]在線上</h4>
+                <a th:href="@{/product/shop}"><img th:src="@{/images/back1.png}">返回商店</a>
+            </td>
+        </tr>
+    </table>
+
+
+    <div class="cart">
+        <div class="container">
+            <div class="cart-items">
+
+                <th:block th:if="${#lists.isEmpty(shoppingcart)}">
+                    <br><br><br><h1 align="center">目前購物車是空的</h1>
+                </th:block>
+
+                <th:block th:unless="${#lists.isEmpty(shoppingcart)}">
+                <h2>我的購物車</h2><br>
+                <form method="post" th:action="@{/product/checkout}" id="checkout" name="checkout">
+                    <th:block th:each="cartVO : ${shoppingcart}">
+                        <div class="cart-header">
+                            <button type="button" th:id="*{cartVO.productNo}" class="close1">X</button>
+                            <div class="cart-sec">
+                                <div class="cart-item">
+                                    <img th:src="@{${cartVO.prodPic}}" th:alt="${cartVO.prodName}">
+                                </div>
+
+                                <div class="cart-item-info">
+                                    <h3 th:text="${cartVO.prodName}"><span th:text="'Model No:'+*{cartVO.productNo}"></span></h3>
+                                    <h4 th:text="'$'+${cartVO.prodPrice}"><span></span></h4>
+                                    <p class="qty">數量 :</p>
+                                    <input min="1" max="10" type="number" id="quantity" th:name="'quantity'+ *{cartVO.productNo}" th:value="*{cartVO.quantity}" class="form-control" >
+                                </div>
+
+                                <div class="delivery">
+                                    <span>需要2-3個工作天</span>
+                                    <div class="clearfix"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </th:block>
+                    <input type="submit" value="結帳去" class="checkout">
+                </form>
+
+
+                 <th:block th:each="cartVO : ${shoppingcart}">
+                    <form method="post" th:action="@{/product/cart}" th:id="'a'+*{cartVO.productNo}">
+                        <input type="hidden" name="del" th:value="${cartVOStat.index}">
+                    </form>
+                </th:block>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript" th:inline="javascript">
+    /*<![CDATA[*/
+    $(function(){
+        /*[# th:each="cartVO : ${shoppingcart}"]*/
+        $("#[[${cartVO.productNo}]]").click(function() {
+            $("#a[[${cartVO.productNo}]]").submit();
+        });
+        /*[/]*/
+    })
+    /*]]>*/
+</script>
+
+</body>
+</html>

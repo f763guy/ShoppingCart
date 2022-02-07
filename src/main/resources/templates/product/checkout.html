@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1">
+    <title>線上購物商城 - 結帳</title>
+    <link rel='stylesheet' th:href="@{/css/bootstrap.css}">
+    <link rel="stylesheet" th:href="@{/css/ShoppingCart.css}">
+    <link rel="stylesheet" th:href="@{/css/sweetalert.css}">
+    <script th:src="@{/js/jquery.min.js}"></script>
+    <script th:src="@{/js/sweetalert.min.js}"></script>
+    <script th:src="@{/js/address.js}"></script>
+</head>
+<body onload="init_address();">
+
+<div class="container" style="width: 75%">
+
+    <table class="wwFormTable">
+        <tr>
+            <td>
+                <h3>線上購物商城 - 結帳</h3>
+                <h4>登入者:[[${session.memName}]] 在線上</h4>
+                <a th:href="@{/product/cart}"><img th:src="@{/images/back2.png}"> 返回購物車</a>
+            </td>
+        </tr>
+    </table>
+
+    <div class="container">
+        <h2>結帳清單:</h2>
+        <br>
+        <table class="table table-striped">
+            <tr>
+                <th width="30">#</th>
+                <th>商品編號</th>
+                <th>商品名稱</th>
+                <th>價格</th>
+                <th>數量</th>
+            </tr>
+            <th:block th:each="cartVO : ${shoppingcart}">
+                <tr>
+                    <td width="30"><div><b>[[${cartVOStat.count}]]</b></div></td>
+                    <td><div align="left"><b th:text="${cartVO.productNo}"></b></div></td>
+                    <td><div align="left"><b th:text="${cartVO.prodName}"></b></div></td>
+                    <td><div align="left"><b th:text="${cartVO.prodPrice}"></b></div></td>
+                    <td><div align="left"><b th:text="${cartVO.quantity}"></b></div></td>
+                </tr>
+            </th:block>
+            <tr>
+                <td></td><td></td><td></td><td></td>
+                <td><div align="right"><font color="red"><b>總金額：$ [[${amount}]]</b></font></div></td>
+            </tr>
+
+        </table>
+        <hr style="border: 1px solid" size="1" width="100%">
+    </div>
+
+    <div class="product">
+        <div class="container">
+            <h2>出貨資料:</h2>
+            <br>
+            <form method="post" class="form-horizontal" id="myForm" name="myForm" th:action="@{/order/confirmation}">
+
+                <div class="form-group">
+                    <label class="control-label col-sm-2" >收件人:</label>
+                    <div class="col-sm-10">
+                        <input name="receiver" type="text" class="form-control" id="receiver" placeholder="請輸入收件人姓名" style="width: 500px" maxlength="15">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label col-sm-2" >地址:</label>
+                    <div class="col-sm-10">
+                        <select id="zone1" name="zone1" class="form-control" style="width: 100px;"></select>  <!-- 縣市 -->
+                        <select id="zone2" name="zone2" class="form-control" style="width: 100px;"></select>  <!-- 鄉鎮市區 -->
+                        <input type="text" id="zipcode"  name="zipcode"  class="form-control" style="width: 60px;">  <!-- 郵遞區號 -->
+                        <input type="text" name="subaddress" placeholder="請輸入地址" class="form-control" style="width: 225px;"><P>   <!-- 地址 -->
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label col-sm-2" >電話:</label>
+                    <div class="col-sm-10">
+                        <input name="rec_phone" type="text" class="form-control" id="rec_phone" placeholder="ex:09XXXXXXXX" style="width: 308px" maxlength="10">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label col-sm-2" >信用卡卡號:</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" style="width: 62px"maxlength="4" name="cdno1" size="5" onkeyup="cdno(1);">
+                        ─
+                        <input type="text" class="form-control" style="width: 62px"maxlength="4" name="cdno2" size="5" onkeyup="cdno(2);">
+                        ─
+                        <input type="text" class="form-control" style="width: 62px"maxlength="4" name="cdno3" size="5" onkeyup="cdno(3);">
+                        ─
+                        <input type="text" class="form-control" style="width: 62px"maxlength="4" name="cdno4" size="5">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label col-sm-2" ></label>
+                    <div class="col-sm-10">
+                        <label class="radio-inline"> <input type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1" checked>VISA </label>
+                        <label class="radio-inline"> <input type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2"> MasterCard </label>
+                        <label class="radio-inline"> <input type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3"> JCB </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label col-sm-2" >信用卡截止日:</label>
+                    <div class="col-sm-10">
+                        <select class="form-control" name="expire_month">
+                            <option value="" selected>請選擇</option>
+                                <option value="01">01</option>
+                                <option value="02">02</option>
+                                <option value="03">03</option>
+                                <option value="04">04</option>
+                                <option value="05">05</option>
+                                <option value="06">06</option>
+                                <option value="07">07</option>
+                                <option value="08">08</option>
+                                <option value="09">09</option>
+                                <option value="10">10</option>
+                                <option value="11">11</option>
+                                <option value="12">12</option>
+                        </select>月
+
+                        <select class="form-control" name="expire_year">
+                            <option value="">請選擇</option>
+                                <option value="2022">2022</option>
+                                <option value="2023">2023</option>
+                                <option value="2024">2024</option>
+                                <option value="2025">2025</option>
+                                <option value="2026">2026</option>
+                                <option value="2027">2027</option>
+                                <option value="2028">2028</option>
+                                <option value="2029">2029</option>
+                                <option value="2030">2030</option>
+                                <option value="2031">2031</option>
+                                <option value="2032">2032</option>
+                        </select>年
+                    </div>
+                </div>
+
+                <div class="form-group" >
+                    <label class="control-label col-sm-2" >信用卡安全碼:</label>
+                    <div class="col-sm-10">
+                        <input type="text" name="expire_safe" class="form-control" placeholder="請輸入安全碼" maxlength="5">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">
+                        <button type="button" onclick="getMemberData()" id="mbutton" class="btn btn-success">導入會員資料</button>
+                        <input type="button" class="order" onclick="return check(document.myForm)" value="送出訂單" style="display: inline-block;">
+                    </div>
+                </div>
+
+                <input type="hidden" name="ord_total" th:value="*{amount}">
+                <input type="hidden" name="rec_zip" id="rec_zip" value="">
+                <input type="hidden" name="rec_address" id="rec_address" value="">
+                <input type="hidden" name="token" th:value="${session.token}">
+                <input type="hidden" name="token.invoke" value="/order/getMemberOrders">
+
+                <th:block th:each="cartVO : ${shoppingcart}">
+                    <input type="hidden" name="memNo" th:value="*{cartVO.memNo}">
+                    <input type="hidden" name="productNo" th:value="*{cartVO.productNo}">
+                    <input type="hidden" name="quantity" th:value="*{cartVO.quantity}">
+                </th:block>
+            </form>
+        </div>
+    </div>
+
+
+</div>
+
+<script type="text/javascript">
+    /*<![CDATA[*/
+    function cdno(arg){
+        if(eval('document.myForm.cdno'+arg+'.value.length') == 4){
+            eval('document.myForm.cdno'+(arg+1)+'.focus()');
+        }
+    }
+
+    function check(arg){
+
+        if(arg.receiver.value==""){
+            swal({title:'請輸入收件人姓名!', type:"error"});
+            arg.receiver.focus();
+            return false;
+        }
+        if(arg.zone1.value.length == 0){
+            swal({title:'請選擇縣市!', type:"error"});
+            arg.zone1.focus();
+            return false;
+        }
+        if(arg.zone2.value.length == 0){
+            swal({title:'請選擇鄉鎮市區!', type:"error"});
+            arg.zone2.focus();
+            return false;
+        }
+        if(arg.subaddress.value==""){
+            swal({title:'請輸入地址!', type:"error"});
+            arg.subaddress.focus();
+            return false;
+        }
+        var re =/^09\d{2}\d{6}$/;
+        if(!re.test(arg.rec_phone.value)){
+            swal({title:'請輸入正確的手機號碼', type:"error"});
+            arg.rec_phone.focus();
+            return false;
+
+        }
+        if(arg.cdno1.value.length != 4 || arg.cdno2.value.length != 4 || arg.cdno3.value.length != 4 || arg.cdno4.value.length != 4){
+            swal({title:'請輸入完整的信用卡號碼', type:"error"});
+            arg.cdno1.focus();
+            return false;
+        }
+        if(arg.expire_month.value.length == 0){
+            swal({title:'請選擇信用卡截止月', type:"error"});
+            arg.expire_month.focus();
+            return false;
+        }
+        if(arg.expire_year.value.length == 0){
+            swal({title:'請選擇信用卡截止年', type:"error"});
+            arg.expire_year.focus();
+            return false;
+        }
+        if(arg.expire_safe.value.length==0  || arg.expire_safe.value.length <=2){
+            swal({title:'請輸入正確的安全碼', type:"error"});
+            arg.expire_safe.focus();
+            return false;
+
+        }
+
+        var rec_zip=$("input[name='zipcode']").val();
+        $("#rec_zip").val(rec_zip);
+        var rec_address=$("#zone1").val()+$("#zone2").val()+$('input[name="subaddress"]').val();
+        $("#rec_address").val(rec_address);
+
+        if(document.getElementsByName(myForm)){
+            setTimeout("$('#myForm').submit()", 3600);
+            setTimeout('swal({   title: "已付款成功",   text: "感謝您的購買，謝謝!",   imageUrl: "[[@{/images/thanks.gif}]]" ,  imageSize: "150x42",   showConfirmButton: false})', 3200);
+            return swal({   title: "信用卡授權中",   text: "請耐心等候，謝謝！",   imageUrl: "[[@{/images/loading.gif}]]" , timer: 3000,  showConfirmButton: false});
+        }
+    }
+
+    function getMemberData(){
+        var mem_address = "台北市-信義區-市府路1號".split('-');
+        var zone1 = mem_address[0]; //縣市
+        var zone2 = mem_address[1]; //鄉鎮市區
+        var subaddress = mem_address[2];  //地址
+        var cdno = "4019454065577271"; //信用卡號碼
+
+        $("input[name='receiver']").val("湯姆貓");
+        $("#zone1").val(zone1);  //縣市
+        $("#zone2").prepend("<option value="+zone2+">"+zone2+"</option>"); //鄉鎮市區
+        $("#zone2").val(zone2); //鄉鎮市區
+        $("input[name='zipcode']").val("110"); //郵遞區號
+        $("input[name='subaddress']").val(subaddress);
+        $("input[name='rec_phone']").val("0988888888");
+        $("input[name='cdno1']").val(cdno.substring(0,4));  //信用卡號碼
+        $("input[name='cdno2']").val(cdno.substring(4,8));  //信用卡號碼
+        $("input[name='cdno3']").val(cdno.substring(8,12)); //信用卡號碼
+        $("input[name='cdno4']").val(cdno.substring(12,16));//信用卡號碼
+        $("select[name='expire_month']").val("06");
+        $("select[name='expire_year']").val("2024");
+        $("input[name='expire_safe']").val("777");
+    }
+    /*]]>*/
+</script>
+
+</body>
+</html>

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>商品資料修改</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/addProduct.css}">
+    <script th:src="@{/js/jquery-1.11.3.min.js}"></script>
+</head>
+<body>
+
+<table class="wwFormTable">
+    <tr><td style="text-align:center;"><h3>商品資料修改</h3>
+        <h4>登入者: [[${session.admAcc}]]在線上</h4>
+        <a th:href="@{/admin/listAll}"><img th:src="@{/images/add.png}" title="商品資料" class="img1"></a>
+    </td></tr>
+</table>
+
+<h2>商品資料修改</h2>
+
+<form method="post" th:action="@{/admin/update}" th:object="${productVO}" name="form1" enctype="multipart/form-data">
+    <table class="wwFormTable">
+
+        <tr th:if="${not #strings.isEmpty(errorMsg)}">
+            <td><font color="red">錯誤訊息:</font></td>
+            <td><font color="red">[[${errorMsg}]]</font></td>
+        </tr>
+
+        <tr>
+            <td>商品編號:</td>
+            <td>[[*{productNo}]]</td>
+        </tr>
+
+        <tr>
+            <td>商品名稱:</td>
+            <td><input type="text" name="prodName" class="input"
+                       th:value="*{prodName}"
+                       placeholder="*商品名稱: 請勿空白(必填)"
+                       required="true"/>
+            </td>
+        </tr>
+        <tr>
+            <td>商品介紹:</td>
+            <td><textarea name="prodIntroduce" class="input" style="height:100px"
+                          th:text="*{prodIntroduce}"
+                          placeholder="*商品介紹: 請勿空白(必填)"
+                          required="true"/>
+                </textarea></td>
+        </tr>
+
+        <tr>
+            <td>商品價格:</td>
+            <td><input type="number" name="prodPrice" class="input" min="1"
+                       th:value="*{prodPrice}"
+                       placeholder="*商品價格: 請填數字(必填)"
+                       required="true"/>
+            </td>
+        </tr>
+        <tr>
+            <td>商品圖片:</td>
+            <td><input type="file"  class="input" name="prod_pic" id="prod_pic" onchange="previewImage()"/></td>
+        </tr>
+        <tr>
+            <td>圖片預覽:</td>
+            <td><img id="blob_holder" class="img2" th:src="*{prodPic}"/></td>
+        </tr>
+    </table>
+    <br>
+    <input type="hidden" name="productNo" th:value="*{productNo}">
+    <input type="hidden" name="token" th:value="${session.token}">
+    <input type="hidden" name="token.invoke" value="/admin/listAll">
+    <input type="submit" value="送出更新" class="btn1"></FORM>
+
+<script type="text/javascript">
+    function previewImage() {
+        var prod_pic = document.getElementById("prod_pic");
+
+        // 確定選取了一個二進位檔案，而非其他格式。
+        if (prod_pic.files.length != 0 && prod_pic.files[0].type.match(/image.*/)) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                var theImg = document.getElementById("blob_holder");
+                theImg.src = e.target.result;
+            };
+            reader.onerror = function (e) {
+                alert("例外狀況，無法讀取二進位檔");
+            };
+            // 讀取二進位檔案。
+            reader.readAsDataURL(prod_pic.files[0]);
+        }
+        else {
+            alert("請選取一個二進位檔");
+        }
+    }
+
+</script>
+
+
+</body>
+</html>

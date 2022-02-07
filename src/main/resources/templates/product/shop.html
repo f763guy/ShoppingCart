@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1">
+    <title>線上購物商城</title>
+    <link rel='stylesheet' th:href="@{/css/bootstrap.css}">
+    <link rel="stylesheet" th:href="@{/css/ShoppingCart.css}">
+    <link rel="stylesheet" th:href="@{/css/sweetalert.css}">
+    <script th:src="@{/js/sweetalert.min.js}"></script>
+    <script th:src="@{/js/jquery.min.js}"></script>
+</head>
+<body>
+
+    <table class="wwFormTable">
+        <tr>
+            <td>
+                <h3>線上購物商城</h3>
+                <h4>登入者: <a th:href="@{/order/getMemberOrders}" th:text="${session.memName}"></a> 在線上</h4>
+                <a th:href="@{/product/cart}"><img th:src="@{/images/cart.png}"></a>
+                <th:block th:unless="${#lists.isEmpty(shoppingcart)}">
+                    我的購物車 - ([[${#lists.size(shoppingcart)}]]購買種類)
+                </th:block>
+            </td>
+        </tr>
+    </table>
+
+    <th:block th:each="product : ${products}">
+        <div class="part-sec"><br><br>
+            <div class="product-default">
+                <img th:src="@{${product.prodPic}}" th:alt="${product.prodName}">
+                <div class="clear" th:text="${product.prodName}"><b></b></div>
+                <div class="clear" th:text= "'$'+${product.prodPrice}"></div>
+                <div class="clear">
+                    <form method="post"	th:action="@{/product/shop}" name="form1" th:id="'form'+*{product.productNo}">
+                        <input type="hidden" name="productNo" th:value="*{product.productNo}">
+                        <input type="hidden" name="prodName" th:value="*{product.prodName}">
+                        <input type="hidden" name="prodPrice" th:value="*{product.prodPrice}">
+                        <input type="hidden" name="prodPic" th:value="*{product.prodPic}">
+                        <input type="hidden" name="quantity" value="1">
+                        <input type="button" class="button orange" value="加入購物車"  th:onclick="'calert('+*{product.productNo}+')'">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </th:block>
+
+
+    <script>
+        var formId = '';
+        function calert(n) {
+            formId = 'form'+n;
+            swal({   title: "已成功加入購物車",   type:"success",   timer: 1500,   showConfirmButton: false });
+            setTimeout("submitForm()", 1600);
+        }
+        function submitForm() {
+            document.getElementById(formId).submit()
+        }
+    </script>
+
+</body>
+</html>

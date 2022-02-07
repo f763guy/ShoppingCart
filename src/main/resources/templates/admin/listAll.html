@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>商品資料</title>
+    <link rel='stylesheet' th:href="@{/css/listAllProduct.css}">
+</head>
+<body>
+
+
+<table class="wwFormTable">
+    <tr>
+        <td>
+            <h4>登入者: [[${session.admAcc}]]在線上</h4>
+            <a th:href="@{/admin/logout}">登出</a>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <h3>商品資料</h3>
+            <a th:href="@{/admin/add}"><img th:src="@{/images/bag.png}" title="商品新增"></a>
+        </td>
+    </tr>
+</table><br>
+
+
+<table class="wwFormTable">
+    <tr>
+        <th>商品編號</th>
+        <th>商品名稱</th>
+        <th>商品價格</th>
+        <th>商品詳情</th>
+        <th>商品圖片</th>
+        <th>修改</th>
+        <th>刪除</th>
+    </tr>
+    <th:block th:each="product : ${products}">
+        <tr>
+            <td th:text="${product.productNo}"></td>
+            <td th:text="${product.prodName}"></td>
+            <td th:text="${product.prodPrice}"></td>
+            <td><textarea style="height:100px" th:text="${product.prodIntroduce}"></textarea></td>
+            <td><img th:src="@{${product.prodPic}}" class="img-thumbnail"></td>
+            <td>
+                <FORM METHOD="post" th:action="@{/admin/update_one}" style="margin-bottom: 0px;">
+                    <input type="submit" value="修改">
+                    <input type="hidden" name="productNo" th:value="${product.productNo}">
+                </FORM>
+            </td>
+            <td>
+                <FORM METHOD="post" th:action="@{/admin/delete}" style="margin-bottom: 0px;">
+                    <input type="submit" value="刪除">
+                    <input type="hidden" name="productNo" th:value="${product.productNo}">
+                </FORM>
+            </td>
+        </tr>
+    </th:block>
+</table>
+
+</body>
+</html>
